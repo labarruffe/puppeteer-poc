@@ -41,7 +41,7 @@ puppeteer.launch({
   // the same value as in page.pdf() below. The height is not important
   await page.setViewport({
     width: width_px,
-    height: 1100,
+    height: 1300,
     deviceScaleFactor: 2,
     isMobile: false
   })
@@ -55,8 +55,15 @@ puppeteer.launch({
     await page.waitFor('input[type=text]');
     page.click('input[type=text]');
     await page.type('input[type=text]', 'renner sitef');
-    await page.waitFor(4000);
+    await page.waitFor(6000);
     page.click('body > grafana-app > div > div > div > div > manage-dashboards > div > div:nth-child(5) > div.search-results-container > dashboard-search-results > div > div:nth-child(3) > a:nth-child(1)');
+    
+    await page.waitFor(4000);
+    
+    const urlstr = page.url();
+
+    await page.goto(`${urlstr}&kiosk`, {waitUntil: 'networkidle0'});
+
     // await Promise.all([
     //   page.waitForNavigation(),
     //   page.click('body > grafana-app > div > div > div > div > manage-dashboards > div > div:nth-child(5) > div.search-results-container > dashboard-search-results > div > div:nth-child(3) > a:nth-child(1)')
@@ -74,8 +81,10 @@ puppeteer.launch({
     // for (el of navbar) { el.hidden = true; };
   // });
 
-  await page.waitForNavigation('networkidle0');
-  // await page.waitForSelector('body > grafana-app > div > div > div > div > div')
+  // await page.waitForNavigation();
+  // await page.waitFor(6000);
+
+  // await page.waitForSelector('#panel-1 > div > plugin-component > panel-plugin-graph > grafana-panel > div > div > div > div.panel-content > ng-transclude > div > div.graph-panel__chart > div');
 
 
   // Get the height of the main canvas, and add a margin
@@ -84,11 +93,8 @@ puppeteer.launch({
   // await page.emulateMedia('screen');
   await page.pdf({
     path: `${outfile}`,
-    // width: width_px + 'px',
-    // height: height_px + 'px',
-    
     width: 1300,
-    height: 1100,
+    height: 1300,
     // format: 'Letter', <-- see note above for generating "paper-sized" outputs
     scale: 0.9,
     displayHeaderFooter: false,
