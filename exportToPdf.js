@@ -10,9 +10,12 @@ const output_pdf = process.env.OUTPUT_PDF;
 
 // Grafana dashboard name should be second parameter
 const dash_name = process.argv[2];
+const dash_name_treated = dash_name.replace(/-/, ' ');
 
 // Generate authorization header for basic auth
 const auth_header = 'Basic ' + new Buffer.from(`${user}:${pass}`).toString('base64');
+
+console.log(`Running puppeteer...`);
 
 puppeteer.launch({
   headless: true,
@@ -42,7 +45,7 @@ puppeteer.launch({
   await page.goto(gf_url, {waitUntil: 'networkidle0'});
   await page.waitFor('input[type=text]');
   page.click('input[type=text]');
-  await page.type('input[type=text]', dash_name);
+  await page.type('input[type=text]', dash_name_treated);
   await page.waitFor(6000);
   page.click('body > grafana-app > div > div > div > div > manage-dashboards > div > div:nth-child(5) > div.search-results-container > dashboard-search-results > div > div:nth-child(3) > a:nth-child(1)');
   await page.waitFor(4000);
@@ -64,5 +67,10 @@ puppeteer.launch({
     printBackground: true,
     landscape: false
   });
+  
+  console.log(`Generated file as ${dash_name}.pdf`);
+
+  console.log(`Done!`);
+
   await browser.close();
 });
